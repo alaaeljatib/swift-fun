@@ -110,6 +110,6 @@ class Solution {
 }
 
 let x = Solution()
-x.calculate("3+2*4")
+x.calculate("3+2*4+14-4")
 
 
