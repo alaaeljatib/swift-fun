@@ -6,25 +6,25 @@ class Solution {
             return 0
         }
         
+        let max = amount + 1;
+        var dp : [Int: Int] = [:]
         
-        var numberOfCoins = 0
-        var leftToDevide = amount
-        let sortedCoins = coins.sorted(){$0 > $1}
-        
-        for coin in sortedCoins {
-            
-            numberOfCoins += leftToDevide / coin
-            leftToDevide = amount % coin
-            
-            if (leftToDevide == 0) {
-                return numberOfCoins
-            }
+        for num in 0...amount {
+            dp[num] = max
         }
         
-        return -1
+        dp[0] = 0;
+        for i in 1...amount {
+            for j in 0..<coins.count {
+                if (coins[j] <= i) {
+                    dp[i] = min(dp[i]!, dp[i - coins[j]]! + 1)
+                }
+            }
+        }
+        return dp[amount]! > amount ? -1 : dp[amount]!
     }
 }
 
 let x = Solution()
 
-print(x.coinChange([1,3,5], 6))
+print(x.coinChange([1,2,5], 11))
