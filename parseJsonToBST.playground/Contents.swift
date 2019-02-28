@@ -79,6 +79,7 @@ class ItemService {
         
         let jsonArray = [["id": "someId1", "name": "soneName1", "description": "some Description 1"],
                     ["id": "someId2", "name": "soneName2", "description": "some Description 2"],
+                    ["id": "someId0", "name": "soneName2", "description": "some Description 0"],
                     ["id": "someId3", "name": "soneName3", "description": "some Description 3"],
                     ["id": "someId4", "name": "soneName4", "description": "some Description 4"],
                     ["id": "someId5", "name": "soneName5", "description": "some Description 5"],
@@ -107,11 +108,35 @@ class ItemService {
             debugPrint(error as Any)
         }
     }
+    
+    func findItem(_ root: TreeNode?,_ name: String, id: String) -> Item? {
+        
+        guard let root = root, root.nodeItems.count > 0 else {return nil }
+        
+        if (root.nodeItems.first!.name == name) {
+            return findItemInArray(root, id)
+        } else if (root.nodeItems.first!.name < name) {
+           return findItem(root.left, name, id: id)
+        }
+        
+          return  findItem(root.right, name, id: id)
+    }
+    
+    private func findItemInArray(_ root : TreeNode, _ id: String) -> Item? {
+        for item in root.nodeItems {
+            if (item.id == id) {
+                return item
+            }
+        }
+        return nil
+    }
 }
 
 let jsonContent = ItemService.instance.prepareJsonContent()!
 ItemService.instance.getAllItems(jsonContent)
 
 ItemService.instance.items.serializeTree(ItemService.instance.items)
+let item = ItemService.instance.findItem(ItemService.instance.items, "soneName2", id: "someId0")
+print(item!)
 
 
