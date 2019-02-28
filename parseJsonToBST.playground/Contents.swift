@@ -24,41 +24,47 @@ class TreeNode {
     var right: TreeNode?
     
     func add(_ item: Item) {
-        
+
         if (self.nodeItems.count == 0) {
-            print("self.nodeItems.count == 0")
+
             self.nodeItems.append(item)
             return
-            
+
         } else {
-            print("self.nodeItems.count > 0")
-            if ( self.nodeItems.first! == item) {
-                print("self.nodeItems.first! == item")
+
+            if (self.nodeItems.first! == item) {
                 self.nodeItems.append(item)
                 return
             } else if (self.nodeItems.first! < item) {
-                print("self.nodeItems.first! < item")
-                if self.left != nil {
+                if let _ = self.left {
                     self.left!.add(item)
                     return
                 } else {
-                    self.left? = TreeNode()
+                    self.left = TreeNode()
                     self.left!.nodeItems.append(item)
                     return
                 }
             }
             else if (self.nodeItems.first! > item) {
-                print("self.nodeItems.first! > item")
-                if self.right != nil {
+                if let _ = self.right {
                     self.right!.add(item)
                     return
                 } else {
-                    self.right? = TreeNode()
+                    self.right = TreeNode()
                     self.right!.nodeItems.append(item)
                     return
                 }
             }
         }
+    }
+    
+    func serializeTree(_ root : TreeNode?) {
+        guard let root = root else {return}
+        
+        print(root.nodeItems)
+        
+        serializeTree(root.left)
+        serializeTree(root.right)
     }
 }
 
@@ -66,23 +72,17 @@ class ItemService {
     
     static let instance = ItemService()
     
-    lazy var items : TreeNode = { [weak self] in
-        if let node = self?.items {
-            return node
-        }
-        return TreeNode()
-        }()
+     let items = TreeNode()
     
     
-    func prepareJsonContent()-> Data? {
+    func prepareJsonContent() -> Data? {
         
-        let jsonArray = [["id": "someId1", "name": "soneName1", "description": "some Description 1"]
-            //            ,
-            //                         ["id": "someId2", "name": "soneName2", "description": "some Description 2"],
-            //        ["id": "someId3", "name": "soneName3", "description": "some Description 3"],
-            //        ["id": "someId4", "name": "soneName4", "description": "some Description 4"],
-            //        ["id": "someId5", "name": "soneName5", "description": "some Description 5"],
-            //        ["id": "someId6", "name": "soneName6", "description": "some Description 6"]
+        let jsonArray = [["id": "someId1", "name": "soneName1", "description": "some Description 1"],
+                    ["id": "someId2", "name": "soneName2", "description": "some Description 2"],
+                    ["id": "someId3", "name": "soneName3", "description": "some Description 3"],
+                    ["id": "someId4", "name": "soneName4", "description": "some Description 4"],
+                    ["id": "someId5", "name": "soneName5", "description": "some Description 5"],
+                    ["id": "someId6", "name": "soneName6", "description": "some Description 6"]
         ]
         
         do {
@@ -90,6 +90,7 @@ class ItemService {
         } catch {
             debugPrint(error as Any)
         }
+        
         return nil
     }
     
@@ -99,7 +100,7 @@ class ItemService {
             let itemsArray : [Item] = try JSONDecoder().decode([Item].self, from: json)
             
             for item in itemsArray {
-                self.items.add(item)
+               self.items.add(item)
             }
             
         } catch {
@@ -108,6 +109,9 @@ class ItemService {
     }
 }
 
-ItemService.instance.getAllItems(ItemService.instance.prepareJsonContent()!)
-debugPrint(String(reflecting: type(of: ItemService.instance.items)))
+let jsonContent = ItemService.instance.prepareJsonContent()!
+ItemService.instance.getAllItems(jsonContent)
+
+ItemService.instance.items.serializeTree(ItemService.instance.items)
+
 
