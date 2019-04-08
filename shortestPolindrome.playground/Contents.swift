@@ -12,3 +12,5 @@ class Solution {
         return ""
     }
 }
+let x = Solution()
+x.shortestPalindrome("abcdefedcbasw")
