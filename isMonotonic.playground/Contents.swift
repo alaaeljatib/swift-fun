@@ -1,15 +1,33 @@
 import UIKit
-
 class Solution {
     func isMonotonic(_ a: [Int]) -> Bool {
         guard a.count > 1 else { return true}
         
-        print(a.last ?? 0)
-        print(a.count)
-        print(a.reduce(0,+))
-
+        var isDirectionSet = false
+        var isAsc = false
         
-        return (a.last ?? 0 ) * a.count >= a.reduce(0,+)
+        for i in 0..<a.count - 1 {
+            if a[i] == a[i+1] {
+                continue
+            }
+            
+            if !isDirectionSet {
+                isAsc = a[i] < a[i+1]
+                isDirectionSet = true
+            }
+            
+            if isAsc {
+                if a[i] > a[i + 1] {
+                    return false
+                }
+            } else {
+                if a[i] < a[i + 1] {
+                    return false
+                }
+            }
+        }
+        
+        return true
     }
 }
 let x = Solution()
